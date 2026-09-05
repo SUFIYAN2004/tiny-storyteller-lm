@@ -28,6 +28,10 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
+with st.sidebar:
+    max_new_tokens = st.slider("Max new tokens", 50, 1000, 400, step=50)
+    temperature = st.slider("Temperature", 0.1, 1.5, 1.0, step=0.1)
+
 prompt = st.chat_input("Say something...")
 
 if prompt:
@@ -37,7 +41,7 @@ if prompt:
 
     idx = encode(prompt)
     with torch.no_grad():
-        out = model.generate(idx, max_new_tokens=200, temperature=0.8)
+        out = model.generate(idx, max_new_tokens=max_new_tokens, temperature=temperature)
     reply = decode(out[0].tolist())
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
